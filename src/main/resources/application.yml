@@ -9,9 +9,10 @@
       show-sql: true
       hibernate:
         ddl-auto: none
+#      database-platform: org.hibernate.dialect.PostgreSQL9Dialect
 
     liquibase:
-      change-log: classpath:liquibase/changelog.yaml
+      change-log: classpath:liquibase/changelog.sql
 
 
 

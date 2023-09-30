@@ -1,19 +1,18 @@
 package ru.vzhitelev.restfulllearning.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @Table(name = "employee")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class Employee {
     @Id
-//    @SequenceGenerator(name = "employee_sequence", sequenceName = "employee_sequence")
-    @GeneratedValue(strategy=GenerationType.IDENTITY) //, generator = "employee_sequence")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "firstname")
@@ -25,13 +24,9 @@ public class Employee {
     @Column(name = "msisdn", unique = true)
     private String MSISDN;
 
-//    @Column(name = )
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department departmentId;
-
-
-    public Employee() {}
 
     public Employee(String firstName, String surName, Department departmentId) {
         this.firstName = firstName;
@@ -51,4 +46,3 @@ public class Employee {
     }
 
 }
-

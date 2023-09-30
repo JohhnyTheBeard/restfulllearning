@@ -10,12 +10,12 @@ import ru.vzhitelev.restfulllearning.entity.Department;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmployeeDTO {
+public class EmployeeDto {
     private Long id;
     private String firstName;
     private String surName;
     private String MSISDN;
-    private Department departmentId;
+    private DepartmentDto departmentId;
 
     public String getFullTheName(){
         return firstName + " the " + surName;

@@ -21,23 +21,19 @@ databaseChangelog:
                   type: character varying(255)
                   constraints:
                     nullable: false
-
         - insert:
-            schemaName: public
             tableName: department_dict
             columns:
               - column:
                   name: name
                   value: "Главный офис"
         - insert:
-            schemaName: public
             tableName: department_dict
             columns:
               - column:
                   name: name
                   value: "Южный филиал"
         - insert:
-            schemaName: public
             tableName: department_dict
             columns:
               - column:

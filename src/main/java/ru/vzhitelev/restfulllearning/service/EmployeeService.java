@@ -1,9 +1,10 @@
 package ru.vzhitelev.restfulllearning.service;
 
 import org.jetbrains.annotations.NotNull;
+import org.mapstruct.Mapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.vzhitelev.restfulllearning.dto.EmployeeDTO;
+import ru.vzhitelev.restfulllearning.dto.EmployeeDto;
 import ru.vzhitelev.restfulllearning.entity.Department;
 import ru.vzhitelev.restfulllearning.entity.Employee;
 import ru.vzhitelev.restfulllearning.map.EmployeeMapper;
@@ -13,10 +14,9 @@ import ru.vzhitelev.restfulllearning.response.RestApiException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
-public class EmployeeService {
+public class EmployeeService implements EmployeeServiceInt {
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
 
@@ -29,58 +29,61 @@ public class EmployeeService {
         return employeeRepository.findByOrderById();
     }
 
-    public List<EmployeeDTO> queryList(Long departmentId, String msisdn) {
-        List<EmployeeDTO> employeeDTOList = new ArrayList<>();
+    public List<EmployeeDto> queryList(Long departmentId, String msisdn) {
+        List<EmployeeDto> employeeDtoList = new ArrayList<>();
         if (departmentId == null && msisdn == null) {
             employeeRepository.findAll(Sort.by(Sort.Direction.ASC, "id"))
                     .forEach(
-                            employee -> employeeDTOList.add(EmployeeMapper.mapToEmployeeDto(employee))
+                            employee -> employeeDtoList.add(EmployeeMapper.MAPPER.toDto(employee))
                     );
-            return employeeDTOList;
+            return employeeDtoList;
         }
         if (departmentId == null) {
             employeeRepository.findEmployeeByMSISDN(msisdn)
                     .stream()
                     .toList()
                     .forEach(
-                            employee -> employeeDTOList.add(EmployeeMapper.mapToEmployeeDto(employee))
+                            employee -> employeeDtoList.add(EmployeeMapper.MAPPER.toDto(employee))
                     );
-            return employeeDTOList;
+            return employeeDtoList;
         }
         Department department = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new RestApiException("Employee with id: " + departmentId + " not found"));
         if (msisdn == null) {
             employeeRepository.findEmployeeByDepartmentId(department)
                     .forEach(
-                            employee -> employeeDTOList.add(EmployeeMapper.mapToEmployeeDto(employee))
+                            employee -> employeeDtoList.add(EmployeeMapper.MAPPER.toDto(employee))
                     );
-            return employeeDTOList;
+            return employeeDtoList;
         } else {
             employeeRepository.findEmployeeByMSISDNAndDepartmentId(msisdn, department)
                     .forEach(
-                            employee -> employeeDTOList.add(EmployeeMapper.mapToEmployeeDto(employee))
+                            employee -> employeeDtoList.add(EmployeeMapper.MAPPER.toDto(employee))
                     );
-            return employeeDTOList;
+            return employeeDtoList;
         }
     }
 
-    public EmployeeDTO getById(Long id) {
+    public EmployeeDto getById(Long id) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new RestApiException("Employee with id: " + id + " not found"));
-        return EmployeeMapper.mapToEmployeeDto(employee);
+        return EmployeeMapper.MAPPER.toDto(employee);
     }
 
-    public EmployeeDTO addEmployee(Employee employee) {
+    public EmployeeDto addEmployee(EmployeeDto employeeDto) {
+        Employee employee = EmployeeMapper.MAPPER.toEntity(employeeDto);
         if (employeeRepository.findEmployeeByMSISDN(employee.getMSISDN()).isPresent())
             throw new RestApiException("MSISDN is busy");
-        return EmployeeMapper.mapToEmployeeDto(employeeRepository.save(employee));
+        return EmployeeMapper.MAPPER.toDto(employeeRepository.save(employee));
     }
 
     public void deleteEmployee(Long id) {
         employeeRepository.deleteById(id);
     }
 
-    public EmployeeDTO updateEmployee(Employee employee) {
+    public EmployeeDto updateEmployee(EmployeeDto employeeDto) {
+        Employee employee = EmployeeMapper.MAPPER.toEntity(employeeDto);
+
         Employee updateEmployee = employeeRepository.findById(employee.getId())
                 .orElseThrow(() -> new RestApiException("Employee with id: " + employee.getId() + " not found"));
         if (!employee.getFirstName().isEmpty()) {
@@ -95,25 +98,23 @@ public class EmployeeService {
             updateEmployee.setDepartmentId(employee.getDepartmentId());
 
         employeeRepository.save(updateEmployee);
-        return EmployeeMapper.mapToEmployeeDto(updateEmployee);
+        return EmployeeMapper.MAPPER.toDto(updateEmployee);
     }
 
-    public EmployeeDTO removeDepartment(@NotNull Long id) {
+    public EmployeeDto removeDepartment(@NotNull Long id) {
         Employee employee = employeeRepository.findById(id).
                 orElseThrow(() -> new RestApiException("Employee with id: " + id + " not found"));
         employee.setDepartmentId(null);
-//                departmentRepository.findById(-1L).
-//                orElseThrow(()-> new RestApiException("Department id: -1 not found")));
         Employee updateEmployee = employeeRepository.save(employee);
-        return EmployeeMapper.mapToEmployeeDto(updateEmployee);
+        return EmployeeMapper.MAPPER.toDto(updateEmployee);
     }
 
-    public EmployeeDTO setDepartment(@NotNull Long id, @NotNull Department department) {
+    public EmployeeDto setDepartment(@NotNull Long id, @NotNull Department department) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new RestApiException("Employee with id: " + id + " not found"));
         employee.setDepartmentId(departmentRepository.findById(department.getId())
                 .orElseThrow(()-> new RestApiException(String.format("Department with id: %d not found", department.getId()))));
         Employee upadteEmployee = employeeRepository.save(employee);
-        return EmployeeMapper.mapToEmployeeDto(upadteEmployee);
+        return EmployeeMapper.MAPPER.toDto(upadteEmployee);
     }
 }

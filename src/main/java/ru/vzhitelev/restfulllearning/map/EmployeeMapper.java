@@ -1,17 +1,14 @@
 package ru.vzhitelev.restfulllearning.map;
 
-import org.jetbrains.annotations.NotNull;
-import ru.vzhitelev.restfulllearning.dto.EmployeeDTO;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
+import ru.vzhitelev.restfulllearning.dto.EmployeeDto;
 import ru.vzhitelev.restfulllearning.entity.Employee;
 
-public class EmployeeMapper {
-    public static @NotNull EmployeeDTO mapToEmployeeDto(@NotNull Employee employee) {
-        EmployeeDTO employeeDTO = new EmployeeDTO();
-        employeeDTO.setId(employee.getId());
-        employeeDTO.setFirstName(employee.getFirstName());
-        employeeDTO.setSurName(employee.getSurName());
-        employeeDTO.setMSISDN(employee.getMSISDN());
-        employeeDTO.setDepartmentId(employee.getDepartmentId());
-        return employeeDTO;
-    }
+@Mapper(componentModel = "spring") //, uses = DepartmentMapper.class)
+public interface EmployeeMapper {
+    EmployeeMapper MAPPER = Mappers.getMapper(EmployeeMapper.class);
+    Employee toEntity(EmployeeDto source);
+    EmployeeDto toDto(Employee target);
+
 }

@@ -1,0 +1,38 @@
+databaseChangelog:
+  - changeSet:
+      id: Try-1
+      author: vazhitelev
+      comment: "Попытка 1"
+      changes:
+        - createTable:
+            tableName: employee
+            remarks: Сотрудники
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoincrement: true
+                  constrains:
+                    primaryKey: true
+                    primaryKeyName: employee_pk
+                    nullable: false
+              - column:
+                  name: firstname
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: surname
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: msisdn
+                  type: varchar(255)
+                  constraints:
+                    uniq: true
+              - column:
+                  name: department_id
+                  type: bigint
+                  constraints:
+                    nullable: false

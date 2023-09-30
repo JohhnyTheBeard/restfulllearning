@@ -5,8 +5,51 @@ databaseChangelog:
       comment: "Попытка 1"
       changes:
         - createTable:
+            tableName: department_dict
+            remarks: "Офисы"
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoincrement: true
+                  constrains:
+                    primaryKey: true
+                    primaryKeyName: department_dict_pk
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+        - insert:
+            schemaName: public
+            tableName: department_dict
+            columns:
+              - column:
+                  name: name
+                  value:  "Главный офис"
+        - insert:
+            schemaName: public
+            tableName: department_dict
+            columns:
+              - column:
+                  name: name
+                  value: "Южный филиал"
+        - insert:
+            schemaName: public
+            tableName: department_dict
+            columns:
+              - column:
+                  name: id
+                  value: -1
+              - column:
+                  name: name
+                  value: "Офис не выбран"
+
+        - createTable:
             tableName: employee
-            remarks: Сотрудники
+            remarks: "Сотрудники"
             columns:
               - column:
                   name: id

@@ -11,7 +11,7 @@
         ddl-auto: none
 
     liquibase:
-      change-log: classpath:liquibase/changelog.sql
+      change-log: classpath:liquibase/changelog.yaml
 
 
 
